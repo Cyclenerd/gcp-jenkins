@@ -1,0 +1,4 @@
+unclassified:
+  location:
+    adminAddress: "Jenkins <jenkins@jenkins.localhost>"
+    url: "http://jenkins.localhost:2529"

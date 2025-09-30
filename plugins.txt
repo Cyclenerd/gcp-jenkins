@@ -1,0 +1,6 @@
+configuration-as-code:latest
+job-dsl:latest
+oidc-provider:latest
+workflow-aggregator:latest
+workflow-cps:latest
+workflow-job:latest

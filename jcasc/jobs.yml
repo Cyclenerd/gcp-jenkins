@@ -1,0 +1,77 @@
+jobs:
+- script: |
+    pipelineJob('gcp-test-bucket') {
+      displayName('GCP Storage Test')
+      description('Pipeline for testing Google Cloud authentication and storage operations')
+      definition {
+        cps {
+          script("""
+            pipeline {
+              agent any
+              environment {
+                WIF_PROVIDER = 'ADD TERRAFORM OUTPUT jenkins-workload-identity-provider HERE'
+                GOOGLE_SERVICE_ACCOUNT = 'ADD TERRAFORM OUTPUT jenkins-account-email HERE'
+                GCS_BUCKET = 'ADD TERRAFORM OUTPUT gcs-test-bucket HERE'
+                SERVICE_ACCOUNT_TOKEN_LIFETIME = '600'
+                GOOGLE_CREDENTIALS = "\$WORKSPACE_TMP/cicd-sa-credentials.json"
+                OUTPUT_FILE = "\$WORKSPACE_TMP/hello-from-jenkins.txt"
+              }
+              stages {
+                stage('Version') {
+                  steps {
+                    sh 'gcloud --version'
+                  }
+                }
+                stage('Auth') {
+                  steps {
+                    withCredentials([file(variable: 'ID_TOKEN_FILE', credentialsId: 'jenkins-id-token')]) {
+                      sh '''
+                        cat "\$ID_TOKEN_FILE"
+                        gcloud iam workload-identity-pools create-cred-config "\$WIF_PROVIDER" \\
+                        --service-account="\$GOOGLE_SERVICE_ACCOUNT" \\
+                        --service-account-token-lifetime-seconds="\$SERVICE_ACCOUNT_TOKEN_LIFETIME" \\
+                        --output-file="\$GOOGLE_CREDENTIALS" \\
+                        --credential-source-file="\$ID_TOKEN_FILE"
+                        gcloud config set auth/credential_file_override "\$GOOGLE_CREDENTIALS"
+                        echo "Hello from Jenkins \$(date)" > "\$OUTPUT_FILE"
+                        gcloud storage cp "\$OUTPUT_FILE" "gs://\$GCS_BUCKET/"
+                      '''
+                    }
+                  }
+                }
+              }
+            }""".stripIndent().trim())
+          sandbox()
+        }
+      }
+    }
+- script: |
+    freeStyleJob('system-information') {
+      displayName('System Information')
+      description('Freestyle job that collects and displays system information')
+      steps {
+        shell('''#!/bin/bash
+          echo "=== SYSTEM INFORMATION ==="
+          echo "Generated on: $(date)"
+          echo
+          echo "=== HOSTNAME ==="
+          hostname
+          echo
+          echo "=== OPERATING SYSTEM ==="
+          uname -a
+          echo
+          echo "=== ENVIRONMENT VARIABLES ==="
+          env | sort
+          echo
+          echo "=== JAVA VERSION ==="
+          java -version
+          echo
+          echo "=== JENKINS AGENT INFO ==="
+          echo "Workspace: $WORKSPACE"
+          echo "Workspace (Temp.): $WORKSPACE_TMP"
+          echo "Build Number: $BUILD_NUMBER"
+          echo "Job Name: $JOB_NAME"
+          echo "Node Name: $NODE_NAME"
+        ''')
+      }
+    }
