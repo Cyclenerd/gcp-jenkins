@@ -41,7 +41,7 @@ resource "random_uuid" "gcs-test-bucket" {
 
 module "gcs-test-bucket" {
   source     = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
-  version    = "~> 11.1"
+  version    = "~> 12.0"
   project_id = var.project_id
   name       = "jenkins-gcs-${random_uuid.gcs-test-bucket.result}"
   location   = var.gcs_region
