@@ -16,7 +16,7 @@ Before you begin, ensure you have the following tools installed and configured o
 
 *   **Container Runtime:** You'll need one of the following container solutions to run the Jenkins instance.
     *   [**Docker**](https://docs.docker.com/get-started/get-docker/) with [**Docker Compose**](https://docs.docker.com/compose/install/): A widely-used container platform. Docker Compose is used to define and run the multi-container Jenkins application.
-    *   [**Podman**](https://podman.io/docs/installation) with [**Podman Compose**](https://github.com/containers/podman-compose): A daemonless container engine that provides a Docker-compatible command-line interface. Podman Compose allows you to run the same `docker-compose.yml` file.
+    *   [**Podman**](https://podman.io/docs/installation) with [**Podman Compose**](https://github.com/containers/podman-compose): A daemonless container engine that provides a Docker-compatible command-line interface. Podman Compose allows you to run the same `docker compose.yml` file.
 
 *   [**Google Cloud CLI**](https://cloud.google.com/sdk/docs/install): The `gcloud` CLI is essential for interacting with your Google Cloud project. You'll use it to authenticate and manage GCP resources.
 
@@ -42,7 +42,7 @@ Launch the Jenkins container using your preferred container runtime. The `-d` fl
 **With Docker:**
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 **With Podman:**
@@ -111,14 +111,14 @@ Replace the placeholder variables in the Jenkins pipeline with the corresponding
 
 ## Usage
 
-The `docker-compose.yml` file provides several commands for managing the lifecycle of your Jenkins instance.
+The `docker compose.yml` file provides several commands for managing the lifecycle of your Jenkins instance.
 
 *   **Stop Jenkins:**
     This command stops the running Jenkins container without removing it.
 
     ```bash
     # With Docker
-    docker-compose stop
+    docker compose stop
 
     # With Podman
     podman-compose stop
@@ -129,7 +129,7 @@ The `docker-compose.yml` file provides several commands for managing the lifecyc
 
     ```bash
     # With Docker
-    docker-compose start
+    docker compose start
 
     # With Podman
     podman-compose start
@@ -140,7 +140,7 @@ The `docker-compose.yml` file provides several commands for managing the lifecyc
 
     ```bash
     # With Docker
-    docker-compose down
+    docker compose down
 
     # With Podman
     podman-compose down
