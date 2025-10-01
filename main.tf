@@ -6,7 +6,7 @@ resource "random_integer" "jenkins-wif" {
 
 module "jenkins-wif" {
   source            = "Cyclenerd/wif-jenkins/google"
-  version           = "~> 1.0.0"
+  version           = "~> 1.0"
   project_id        = var.project_id
   pool_id           = "jenkins-${random_integer.jenkins-wif.result}"
   provider_id       = "jenkins-oidc-${random_integer.jenkins-wif.result}"
@@ -27,7 +27,7 @@ resource "google_service_account" "jenkins" {
 # Allow service account to login via WIF and only from specific Jenkins build with URL in subject
 module "jenkins-service-account" {
   source     = "Cyclenerd/wif-service-account/google"
-  version    = ">= 1.1.0"
+  version    = "~> 1.1"
   project_id = var.project_id
   pool_name  = module.jenkins-wif.pool_name
   account_id = google_service_account.jenkins.account_id
